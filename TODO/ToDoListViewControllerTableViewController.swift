@@ -102,13 +102,19 @@ class ToDoListViewControllerTableViewController: UITableViewController {
     }
     */
     @IBAction func addBtnPressed(_ sender: UIBarButtonItem) {
+        var textField : UITextField!
         let alert = UIAlertController(title: "尊敬的用户", message: "确定要新建待处理事项么？", preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: "否", style: .cancel, handler: nil)
-        let affirmAction = UIAlertAction(title: "是", style: .default){action in
-            print("是")
+        let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler: nil)
+        let affirmAction = UIAlertAction(title: "添加", style: .default){action in
+            print(textField.text!)
         }
+
         alert.addAction(cancelAction)
         alert.addAction(affirmAction)
+        alert.addTextField(configurationHandler: {alertTextField in
+            alertTextField.placeholder="请输入事项"
+            textField = alertTextField
+        })
         self.present(alert, animated: true, completion: nil)
     }
     
