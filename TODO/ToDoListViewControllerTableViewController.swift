@@ -10,7 +10,7 @@ import UIKit
 
 class ToDoListViewControllerTableViewController: UITableViewController {
     
-    let itemArr = ["购买水杯","吃感冒药","修改密码"]
+    var itemArr = ["购买水杯","吃感冒药","修改密码"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -107,6 +107,8 @@ class ToDoListViewControllerTableViewController: UITableViewController {
         let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler: nil)
         let affirmAction = UIAlertAction(title: "添加", style: .default){action in
             print(textField.text!)
+            self.itemArr.append(textField.text!)
+            self.tableView.reloadData()
         }
 
         alert.addAction(cancelAction)
