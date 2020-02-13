@@ -101,5 +101,15 @@ class ToDoListViewControllerTableViewController: UITableViewController {
         // Pass the selected object to the new view controller.
     }
     */
-
+    @IBAction func addBtnPressed(_ sender: UIBarButtonItem) {
+        let alert = UIAlertController(title: "尊敬的用户", message: "确定要新建待处理事项么？", preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "否", style: .cancel, handler: nil)
+        let affirmAction = UIAlertAction(title: "是", style: .default){action in
+            print("是")
+        }
+        alert.addAction(cancelAction)
+        alert.addAction(affirmAction)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
 }
