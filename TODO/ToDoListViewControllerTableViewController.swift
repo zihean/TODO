@@ -11,6 +11,7 @@ import UIKit
 class ToDoListViewControllerTableViewController: UITableViewController {
     
     var itemArr = ["购买水杯","吃感冒药","修改密码"]
+    let defaults = UserDefaults.standard
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,6 +21,9 @@ class ToDoListViewControllerTableViewController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        if let arr = defaults.array(forKey: "itemArr"){
+            itemArr = arr as! [String]
+        }
     }
 
     // MARK: - Table view data source
@@ -108,6 +112,7 @@ class ToDoListViewControllerTableViewController: UITableViewController {
         let affirmAction = UIAlertAction(title: "添加", style: .default){action in
             print(textField.text!)
             self.itemArr.append(textField.text!)
+            self.defaults.set(self.itemArr, forKey: "itemArr")
             self.tableView.reloadData()
         }
 
