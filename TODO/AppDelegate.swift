@@ -16,7 +16,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last!)
+        
+        //string path
+        print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!)
+        //url path 最后多一/
+        let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+        print(dataFilePath!)
+        
         return true
     }
 

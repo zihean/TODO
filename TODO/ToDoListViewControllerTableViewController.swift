@@ -10,8 +10,9 @@ import UIKit
 
 class ToDoListViewControllerTableViewController: UITableViewController {
     
-    var itemArr = ["购买水杯","吃感冒药","修改密码"]
-    let defaults = UserDefaults.standard
+    var itemArr = [ToDoItem]()
+    //let defaults = UserDefaults.standard
+    let dataFilePathURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("ToDoItems.plist")
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,9 +22,15 @@ class ToDoListViewControllerTableViewController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
-        if let arr = defaults.array(forKey: "itemArr"){
-            itemArr = arr as! [String]
+        print(itemArr)
+        for i in 1...50{
+            itemArr.append(ToDoItem(name: "事件No.\(i)"))
         }
+//        if let arr = defaults.array(forKey: "itemArr"){
+//            //itemArr = arr as! [String]
+//            //print(itemArr)
+//        }
+        loadToDoItems()
     }
 
     // MARK: - Table view data source
@@ -43,20 +50,22 @@ class ToDoListViewControllerTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
 
         // Configure the cell...
-        cell.textLabel?.text = itemArr[indexPath.row]
+        cell.textLabel?.text = itemArr[indexPath.row].name
+        cell.accessoryType = itemArr[indexPath.row].hasDone ? .checkmark : .none
         cell.backgroundColor = UIColor.systemPink
 
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(itemArr[indexPath.row])
+        print(itemArr[indexPath.row].name)
+        let item = itemArr[indexPath.row]
+        itemArr[indexPath.row].hasDone = item.hasDone ? false : true
+        saveToDoItems()
         
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark{
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        }else{
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
+        tableView.beginUpdates()
+        tableView.reloadRows(at: [indexPath], with: .none)
+        tableView.endUpdates()
         
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -105,14 +114,36 @@ class ToDoListViewControllerTableViewController: UITableViewController {
         // Pass the selected object to the new view controller.
     }
     */
+    func loadToDoItems(){
+        let decoder = PropertyListDecoder()
+        do{
+            let data = try Data(contentsOf: dataFilePathURL!)
+            itemArr = try decoder.decode([ToDoItem].self, from: data)
+        }catch{
+            print(error.localizedDescription)
+        }
+    }
+    
+    func saveToDoItems(){
+        let encoder = PropertyListEncoder()
+        do{
+            let data = try encoder.encode(itemArr)
+            try data.write(to: dataFilePathURL!)
+        }catch{
+            print(error.localizedDescription)
+        }
+    }
+    
     @IBAction func addBtnPressed(_ sender: UIBarButtonItem) {
         var textField : UITextField!
         let alert = UIAlertController(title: "尊敬的用户", message: "确定要新建待处理事项么？", preferredStyle: .alert)
         let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler: nil)
         let affirmAction = UIAlertAction(title: "添加", style: .default){action in
             print(textField.text!)
-            self.itemArr.append(textField.text!)
-            self.defaults.set(self.itemArr, forKey: "itemArr")
+            self.itemArr.append(ToDoItem(name:textField.text!))
+            //self.defaults.set(self.itemArr, forKey: "itemArr")
+            //print(self.defaults.array(forKey: "itemArr")!)
+            self.saveToDoItems()
             self.tableView.reloadData()
         }
 
